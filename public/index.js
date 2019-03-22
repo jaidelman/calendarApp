@@ -122,7 +122,7 @@ $(document).ready(function() {
             time = time.slice(0, 2) + ':' + time.slice(2, 4) + ':' + time.slice(4, 6);
 
             //Check for UTC
-            if(isUTC == 'true'){
+            if(isUTC){
               time += '(UTC)';
             }
             //Add row to table
@@ -374,7 +374,7 @@ function getStatusPanel(){
       //Clear, then append
       $('#statusPanel').html('');
       $('#statusPanel').append(data);
-      
+
     }
   });
 
