@@ -32,6 +32,7 @@ $(document).ready(function() {
           }
         }
       }
+      //Else state no files
       else{
         $('#fileLog').html('<tr><td>No files</td><td></td><td></td><td></td><td></td></tr>');
       }
@@ -60,6 +61,7 @@ $(document).ready(function() {
         //Loop through and put all files in table
         for(i = 0; i < data.length; i++){
 
+          //If not invalid, add to table
           if(data[i].prodID != "Invalid File"){
             $('#selectDropdown').append('<option>' + data[i].filename + '</option>');
             $('#eventDropdown').append('<option>' + data[i].filename + '</option>');
@@ -84,15 +86,16 @@ $(document).ready(function() {
   //When clear button is clicked, clear status panel
   $('#clear').on('click', function(e){
     e.preventDefault();
-    addToStatusPanel("");
-    $('h6').remove();
+    addToStatusPanel(""); //Clear status panel
+    $('h6').remove(); //All text added to status panel will be of type <h6>
   });
 
   //Dropdown Menu listener
   $('#selectDropdown').on("change", function(){
 
-    var selectedValue = $(this).find(':selected').val();
+    var selectedValue = $(this).find(':selected').val(); //Get selected calendar
 
+    //Get request for info of selected calendar
     $.ajax({
       type: 'get',
       dataType: 'json', //Returns a JSON
@@ -100,6 +103,7 @@ $(document).ready(function() {
       data: {filename : selectedValue},
       success:function(data){
 
+        //If not empty array
         if(data != '[]'){
 
           //Clear table
@@ -117,10 +121,11 @@ $(document).ready(function() {
             date = date.slice(0, 4) + '/' + date.slice(4, 6) + '/' + date.slice(6, 8);
             time = time.slice(0, 2) + ':' + time.slice(2, 4) + ':' + time.slice(4, 6);
 
-            if(isUTC){
+            //Check for UTC
+            if(isUTC == 'true'){
               time += '(UTC)';
             }
-
+            //Add row to table
             $('#calViewTable').append('<tr><td>' + (i+1) + '</td><td>' + date + '</td><td>' + time + '</td><td>' + data[i].summary + '</td><td onclick=\"sendProperties(\'' + selectedValue + '\',' + (i+1) + ');\"><a href=\"#\">' + data[i].numProps + '</a></td><td onclick=\"sendAlarm(\'' + selectedValue + '\', ' + (i+1) + ');\"><a href=\"#\">' + data[i].numAlarms + '</a></td></tr>');
           }
         }
@@ -202,6 +207,7 @@ $(document).ready(function() {
 
   });
 
+  //On submission of event
   $('#addEventForm').submit(function(e){
     e.preventDefault();
     var filename = $('#eventDropdown').find(':selected').val();
@@ -259,14 +265,6 @@ $(document).ready(function() {
 
   });
 
-  // Event listener form replacement example, building a Single-Page-App, no redirects if possible
-  $('#someform').submit(function(e){
-    $('#blah').html("Callback from the form");
-    e.preventDefault();
-    //Pass data to the Ajax call, so it gets passed to the
-    $.ajax({});
-  });
-
 });
 
 //Sends alarms to status panel
@@ -294,6 +292,7 @@ function sendAlarm(filename, eventNum){
 
 }
 
+//Sends properties to status panel
 function sendProperties(filename, eventNum){
 
   $.ajax({
@@ -315,13 +314,14 @@ function sendProperties(filename, eventNum){
   });
 }
 
+//Prints all alarms from array of JSONs
 function printAlarms(data){
 
   var alarmJSON;
   var toReturn = '';
 
+  //For all alarms add to string
   for(i = 0; i<data.length; i++){
-
     alarmJSON = data[i];
     toReturn += ('<h6>&#8195&#8195&#8195Alarm ' + (i+1) + ': Action: ' + alarmJSON.action + ', Trigger: ' + alarmJSON.trigger + ', numProps: ' + alarmJSON.numProps + '<br></h6>');
   }
@@ -330,13 +330,14 @@ function printAlarms(data){
 
 }
 
+//Prints properties from array of JSONs
 function printProperties(data){
 
   var propJSON;
   var toReturn = '';
 
+  //For all properties add to string
   for(i = 0; i<data.length; i++){
-
     propJSON = data[i];
     toReturn += ('<h6>&#8195&#8195&#8195Property Name: ' + propJSON.propName + ', Property Description: ' + propJSON.propDescr + '<br></h6>');
   }
@@ -344,8 +345,10 @@ function printProperties(data){
   return toReturn;
 }
 
+//Adds toAdd to status panel
 function addToStatusPanel(toAdd){
 
+  //Send data to the server
   $.ajax({
     type: 'post',
     data: {toAdd : toAdd},
@@ -355,18 +358,23 @@ function addToStatusPanel(toAdd){
     }
   });
 
-  getStatusPanel();
+  getStatusPanel(); //Get the new status panel to make sure it appears
 }
 
+//Get status panel and append it
 function getStatusPanel(){
 
+  //Get status panel from server
   $.ajax({
     type:'get',
     dataType:'text',
     url:'/getStatusPanel',
     success:function(data){
+
+      //Clear, then append
       $('#statusPanel').html('');
       $('#statusPanel').append(data);
+      
     }
   });
 

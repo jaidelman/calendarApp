@@ -1540,15 +1540,18 @@ char *eventToJSON(const Event* event){
   return toReturn;
 }
 
+//Creates and returns JSON from an alarm
 char *alarmToJSON(const Alarm *alarm){
 
   char *toReturn = malloc(sizeof(char) * 1000);
 
+  //Check for NULL
   if(alarm == NULL){
     strcpy(toReturn, "{}");
     return toReturn;
   }
 
+  //Build JSON
   strcpy(toReturn, "{\"action\":\"");
   strcat(toReturn, alarm->action);
   strcat(toReturn, "\",\"trigger\":\"");
@@ -1558,18 +1561,21 @@ char *alarmToJSON(const Alarm *alarm){
 
   strcat(toReturn, "}");
 
-  return toReturn;
+  return toReturn; //Return JSON
 }
 
+//Creates and returns a JSON from a property
 char *propToJSON(const Property *prop){
 
   char *toReturn = malloc(sizeof(char) * 2000);
 
+  //Check for NULL
   if(prop == NULL){
     strcpy(toReturn, "{}");
     return toReturn;
   }
 
+  //Build JSON
   strcpy(toReturn, "{\"propName\":\"");
   strcat(toReturn, prop->propName);
   strcat(toReturn, "\",\"propDescr\":\"");
@@ -1577,16 +1583,18 @@ char *propToJSON(const Property *prop){
 
   strcat(toReturn, "\"}");
 
-  return toReturn;
+  return toReturn; //Return JSON
 
 }
 
+//Creates and returns a list of properties in JSON format
 char *propListToJSON(const List *propList){
 
   char *toReturn = malloc(sizeof(char) * 10000);
-  char *propJSON;
-  Node *node;
+  char *propJSON; //Temp JSON of a property
+  Node *node; //To iterate through properties
 
+  //Check for NULL
   if(propList == NULL){
     strcpy(toReturn, "[]");
     return toReturn;
@@ -1594,6 +1602,7 @@ char *propListToJSON(const List *propList){
 
   strcpy(toReturn, "[");
 
+  //Go through all properties and add the JSON to the string
   node = propList->head;
   while(node != NULL){
     propJSON = propToJSON(node->data);
@@ -1612,12 +1621,14 @@ char *propListToJSON(const List *propList){
 
 }
 
+//Creates JSON from list of alarms
 char *alarmListToJSON(const List *alarmList){
 
   char *toReturn = malloc(sizeof(char) * 5000);
-  char *alarmJSON;
-  Node *node;
+  char *alarmJSON; //For individual alarm JSONs
+  Node *node; //To iterate through alarms
 
+  //Check for NULL
   if(alarmList == NULL){
     strcpy(toReturn, "[]");
     return toReturn;
@@ -1625,6 +1636,7 @@ char *alarmListToJSON(const List *alarmList){
 
   strcpy(toReturn, "[");
 
+  //Add all alarms to array
   node = alarmList->head;
   while(node != NULL){
     alarmJSON = alarmToJSON(node->data);
@@ -1642,12 +1654,14 @@ char *alarmListToJSON(const List *alarmList){
   return toReturn;
 }
 
+//Creates array of JSONs with events
 char *eventListToJSON(const List *eventList){
 
   char *toReturn = malloc(sizeof(char) * 5000);
-  char *eventJSON;
-  Node *node;
+  char *eventJSON; //To store temp event JSON
+  Node *node; //To iterate through events
 
+  //Check for NULL
   if(eventList == NULL){
     strcpy(toReturn, "[]");
     return toReturn;
@@ -1655,6 +1669,7 @@ char *eventListToJSON(const List *eventList){
 
   strcpy(toReturn, "[");
 
+  //Add all events to array
   node = eventList->head;
   while(node != NULL){
     eventJSON = eventToJSON(node->data);
@@ -1672,15 +1687,18 @@ char *eventListToJSON(const List *eventList){
   return toReturn;
 }
 
+//Creates JSON from calendar
 char *calendarToJSON(const Calendar *cal){
 
   char *toReturn = malloc(sizeof(char) * 1000);
 
+  //Check for NULL
   if(cal == NULL){
     strcpy(toReturn, "{}");
     return toReturn;
   }
 
+  //Build JSON
   strcpy(toReturn, "{\"version\":");
   sprintf(toReturn + strlen(toReturn), "%d", (int)cal->version);
   strcat(toReturn, ",\"prodID\":\"");
@@ -1746,6 +1764,7 @@ Event *JSONtoEvent(const char *str){
 
 }
 
+//Makes JSON from a file
 char *icalToJSON(char *filename){
 
   Calendar *temp = NULL;
@@ -1769,15 +1788,18 @@ char *icalToJSON(char *filename){
 
 }
 
+//Make eventList JSON from a file
 char *eventListWrapper(char *filename){
 
   Calendar *temp = NULL;
   char *toReturn;
   ICalErrorCode err = OK;
 
+  //Create and validate
   err = createCalendar(filename, &temp);
   if(err == OK) err = validateCalendar(temp); //Only validate if still OK
 
+  //Return the JSON
   if(err == OK){
     toReturn = eventListToJSON(temp->events);
     deleteCalendar(temp);
@@ -1788,6 +1810,7 @@ char *eventListWrapper(char *filename){
   }
 }
 
+//Create alarmList JSON from filename
 char *alarmListWrapper(char *filename, int eventNum){
 
   Calendar *temp = NULL;
@@ -1796,6 +1819,7 @@ char *alarmListWrapper(char *filename, int eventNum){
   Event *tempEvent;
   ICalErrorCode err = OK;
 
+  //Create and validate
   err = createCalendar(filename, &temp);
   if(err == OK) err = validateCalendar(temp); //Only validate if still OK
 
@@ -1803,7 +1827,7 @@ char *alarmListWrapper(char *filename, int eventNum){
 
     node = temp->events->head;
 
-    //Get to right event
+    //Find event
     for(int i = 0; i<eventNum-1; i++){
 
       if(node->next != NULL){
@@ -1813,6 +1837,7 @@ char *alarmListWrapper(char *filename, int eventNum){
 
     tempEvent = node->data;
 
+    //Get alarm list and return
     toReturn = alarmListToJSON(tempEvent->alarms);
     deleteCalendar(temp);
     return toReturn;
@@ -1822,6 +1847,7 @@ char *alarmListWrapper(char *filename, int eventNum){
   }
 }
 
+//Get propertyList from filename
 char *propListWrapper(char *filename, int eventNum){
 
   Calendar *temp = NULL;
@@ -1830,6 +1856,7 @@ char *propListWrapper(char *filename, int eventNum){
   Event *tempEvent;
   ICalErrorCode err = OK;
 
+  //Create and validate
   err = createCalendar(filename, &temp);
   if(err == OK) err = validateCalendar(temp); //Only validate if still OK
 
@@ -1847,6 +1874,7 @@ char *propListWrapper(char *filename, int eventNum){
 
     tempEvent = node->data;
 
+    //Get JSON
     toReturn = propListToJSON(tempEvent->properties);
     deleteCalendar(temp);
     return toReturn;
@@ -1857,6 +1885,7 @@ char *propListWrapper(char *filename, int eventNum){
 
 }
 
+//Creates calendar and returns if successful
 bool calendarForm(char *filename, char *version, char *prodID, char *eventUID, char *eventSummary, char *startDT, char *creationDT){
 
   Calendar *cal = malloc(sizeof(Calendar));
@@ -1897,6 +1926,7 @@ bool calendarForm(char *filename, char *version, char *prodID, char *eventUID, c
 
 }
 
+//Adds event to calendar
 void addEventToCal(char *filename, char *uid, char *summary, char *startDT, char *creationDT){
 
   Calendar *cal = NULL;

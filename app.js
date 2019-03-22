@@ -58,6 +58,7 @@ app.post('/upload', function(req, res) {
 
   let uploadFile = req.files.uploadFile;
 
+  //Make sure file exists
   if(uploadFile != null){
     // Use the mv() method to place the file somewhere on your server
     uploadFile.mv('uploads/' + uploadFile.name, function(err) {
@@ -67,9 +68,11 @@ app.post('/upload', function(req, res) {
 
       var isValid = libcal.icalToJSON('./uploads/' + uploadFile.name);
 
+      //If valid, succes!
       if(isValid != ""){
         statusPanel += '<h6>Successfully uploaded ' + uploadFile.name + '</h6>';
       }
+      //Else tell user it's invalid
       else{
         statusPanel += '<h6>' + uploadFile.name + ' is an invalid calendar</h6>';
       }
@@ -79,6 +82,7 @@ app.post('/upload', function(req, res) {
 
 
   }
+  //If non existant, tell user no file was selected
   else{
     statusPanel += '<h6>No file selected</h6>';
     res.redirect('/');
@@ -152,21 +156,25 @@ app.post('/addCalendar', function(req, res){
     seconds = '0' + seconds;
   }
 
+  //Build string
   var startDT = date.slice(0, 4) + date.slice(5, 7) + date.slice(8, 10) + 'T' + time.slice(0, 2) + time.slice(3, 5) + time.slice(6, 8);
 
+  //If utc, add a Z
   if(isUTC == 'true'){
     startDT += 'Z';
   }
 
+  //Build creation date
   var creationDT = year + month + day + 'T' + hour + minutes + seconds;
 
+  //Create calendar
   libcal.calendarForm(filename, version, prodID, eventUID, eventSummary, startDT, creationDT);
 
-  statusPanel += ('<h6>Successfully created ' + req.body.filename + '</h6>');
+  statusPanel += ('<h6>Successfully created ' + req.body.filename + '</h6>'); //Tell user on success
 
 });
 
-//Add event file
+//Add event to file
 app.post('/addEvent', function(req, res){
 
   var filename = './uploads/' + req.body.filename;
@@ -212,16 +220,21 @@ app.post('/addEvent', function(req, res){
     seconds = '0' + seconds;
   }
 
+  //Build start date
   var startDT = date.slice(0, 4) + date.slice(5, 7) + date.slice(8, 10) + 'T' + time.slice(0, 2) + time.slice(3, 5) + time.slice(6, 8);
 
+  //Add Z if it is UTC
   if(isUTC == 'true'){
     startDT += 'Z';
   }
 
+  //Build creationDT
   var creationDT = year + month + day + 'T' + hour + minutes + seconds;
 
+  //Add event to cal
   libcal.addEventToCal(filename, eventUID, eventSummary, startDT, creationDT);
 
+  //Add to status panel
   statusPanel += ('<h6>Successfully added event ' + eventUID + ' to ' + req.body.filename + '</h6>');
 
 });
@@ -238,7 +251,7 @@ app.post('/statusPanel', function(req, res){
   res.redirect('/');
 });
 
-//Get alarmJSON
+//Get alarmList JSON
 app.get('/getAlarmList', function(req, res){
 
   var alarmList;
@@ -250,7 +263,7 @@ app.get('/getAlarmList', function(req, res){
   res.send(alarmList);
 });
 
-//Get alarmJSON
+//Get propertyList JSON
 app.get('/getPropertyList', function(req, res){
 
   var propList;
@@ -262,7 +275,7 @@ app.get('/getPropertyList', function(req, res){
   res.send(propList);
 });
 
-//Get Event List
+//Get Event List JSON
 app.get('/getEventList', function(req, res){
 
   var eventList;
@@ -274,7 +287,7 @@ app.get('/getEventList', function(req, res){
 
 });
 
-//Get Files
+//Get Files from server
 app.get('/getFiles', function(req, res){
 
   var files = fs.readdirSync(__dirname + '/uploads/');
@@ -285,13 +298,16 @@ app.get('/getFiles', function(req, res){
   //Put JSONs in toSend
   for(var i = 0; i<files.length; i++){
 
+    //Get JSON of file
     fileToJSON = libcal.icalToJSON('./uploads/' + files[i]);
 
+    //If not null, add files to JSON we're returning
     if(fileToJSON != ""){
       toSend += fileToJSON;
       toSend = toSend.slice(0, toSend.length-1) + ',\"filename\":\"' + files[i] + '\"' + toSend.slice(toSend.length -1); //Add filename to JSON
-      if(i != files.length - 1) toSend += ',';
+      if(i != files.length - 1) toSend += ','; //If last file, don't put a comma
     }
+    //Otherwise give it the default invalid file string
     else{
       toSend += invalidFile + files[i] + '\"}';
       if(i != files.length - 1) toSend += ',';
@@ -302,13 +318,6 @@ app.get('/getFiles', function(req, res){
 
   res.send(toSend);
 
-});
-
-//Sample endpoint
-app.get('/someendpoint', function(req , res){
-  res.send({
-    foo: "bar"
-  });
 });
 
 app.listen(portNum);
