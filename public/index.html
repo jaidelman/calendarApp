@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Calendar App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CHANGE ME">
+  <meta name="keywords" content="CHANGE ME">
+  <meta name="author" content="CHANGE ME">
+  <!-- Load jquery, bootstrap -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <!-- Custom CSS End -->
+</head>
+<body>
+  <div id="MyStuff">
+    <h1><u>Calendar Viewer</u></h1>
+    <br><br>
+    <!-- Status Panel -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3><u>Status Panel</u></h3>
+      </div>
+      <div class="smallScroll" id = "statusPanel">
+
+      </div>
+      <br>
+      <!-- Clear Button -->
+      <button type="button" class="btn btn-default" style="float: right;" id=clear>Clear</button>
+      <br><br>
+      <hr>
+    </div>
+    <!-- File Log Panel -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3><u>File Log Panel</u></h3>
+      </div>
+      <!-- File Log Table -->
+      <div class="scroll">
+        <table class="table-striped" id>
+          <thead>
+            <tr>
+              <th >File name<br>(click to download)</th>
+              <th >Version</th>
+              <th >Product ID</th>
+              <th >Number of Events</th>
+              <th >Number of Properties</th>
+            </tr>
+          </thead>
+          <tbody id="fileLog">
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div>
+    <!-- Upload File Button -->
+    <form enctype="multipart/form-data" method="post" action="/upload" id="uploadButton">
+      <input type="file" name="uploadFile"/>
+      <br>
+      <input type="submit" value="Upload">
+    </form>
+    <hr>
+  </div>
+  <!-- Calendar View Panel -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><u>Calendar View Panel</u></h3>
+    </div>
+    <!-- Drop Down Menu -->
+    <div>
+      <select id="selectDropdown">
+
+      </select>
+    </div>
+    <!-- Calendar View Table -->
+    <div class="scroll">
+      <table  class="table-striped">
+        <thead>
+          <tr>
+            <th>Event No</th>
+            <th >Start Date</th>
+            <th >Start Time</th>
+            <th >Summary</th>
+            <th >Properties</th>
+            <th >Alarms</th>
+          </tr>
+        </thead>
+        <tbody id="calViewTable">
+
+        </tbody>
+      </table>
+      <hr>
+    </div>
+    <!-- Create Calendar -->
+    <div id="createCalendar">
+      <h3><u>Create Calendar</u></h3>
+      <form ref="createCalForm" id="createCalForm">
+        <div class="cal-form">
+          <input type="text" class="form-control" id="filenameBox" value="" placeholder="Filename" autocomplete="off"><br>
+          <input type="text" class="form-control" id="versionBox" value="" placeholder="Version" autocomplete="off"><br>
+          <input type="text" class="form-control" id="productIDBox" value="" placeholder="Product ID" autocomplete="off"><br>
+          <input type="text" class="form-control" id="uidBox" value="" placeholder="Event UID" autocomplete="off"><br>
+          <input type="text" class="form-control" id="summaryBox" value="" placeholder="Event Summary" autocomplete="off"><br>
+          <br>
+          <input type="date" id="dateForm" name="dateForm">
+          <input type="time" step="1" id="timeForm" name="timeForm" min="0:00:00" max="23:59:59">
+          <input type="checkbox" name="UTC" id="utcForm"> UTC
+          <input type='submit' class="btn btn-secondary" id="createCalButton" style="float:right;" onclick="document.location.reload(true)">
+        </div>
+      </form>
+    </div>
+    <hr>
+  </div>
+  <!-- Add Event -->
+  <div id="addEvent">
+    <h3><u>Add Event</u></h3>
+    <div>
+      <select id="eventDropdown">
+
+      </select>
+    </div>
+    <form ref="addEventForm" id="addEventForm">
+      <div class="event-form">
+        <input type="text" class="form-control" id="eventUidBox" value="" placeholder="Event UID" autocomplete="off"><br>
+        <input type="text" class="form-control" id="eventSummaryBox" value="" placeholder="Event Summary" autocomplete="off"><br>
+        <br>
+        <input type="date" id="eventDateForm" name="eventDateForm">
+        <input type="time" step="1" id="eventTimeForm" name="eventTimeForm" min="0:00:00" max="23:59:59">
+        <input type="checkbox" name="eventUTC" id="eventUtc"> UTC
+        <input type='submit' class="btn btn-secondary" id="createEventButton" style="float:right;" onclick="document.location.reload(true)">
+      </div>
+    </form>
+  </div>
+  <hr>
+</div>
+</div>
+<!-- Leave me at the bottom of body -->
+<script src="/index.js"></script>
+</div>
+</body>
+</html>
