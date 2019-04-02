@@ -8,6 +8,35 @@ const express = require("express");
 const app     = express();
 const path    = require("path");
 const fileUpload = require('express-fileupload');
+const mysql = require('mysql');
+
+const connection = mysql.createConnection({
+  host : 'dursley.socs.uoguelph.ca',
+  user : 'jaidelma',
+  password : '1000139',
+  database : 'jaidelma'
+});
+
+//Connect to database
+connection.connect(function(err) {
+  console.log("Connected!");
+  var sql = "CREATE TABLE IF NOT EXISTS FILE(cal_id INT AUTO_INCREMENT PRIMARY KEY, file_Name VARCHAR(60) NOT NULL, version INT NOT NULL, prod_id VARCHAR(256) NOT NULL)";
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log('Created FILE');
+  });
+  sql = "CREATE TABLE IF NOT EXISTS EVENT(Event_id INT AUTO_INCREMENT PRIMARY KEY, summary VARCHAR(1024), start_time DATETIME NOT NULL, location VARCHAR(60), organizer VARCHAR(256), cal_file INT NOT NULL, FOREIGN KEY(cal_file) REFERENCES FILE(cal_id) ON DELETE CASCADE)";
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log('Created EVENT');
+  });
+  sql = "CREATE TABLE IF NOT EXISTS ALARM(alarm_id INT AUTO_INCREMENT PRIMARY KEY, action VARCHAR(256) NOT NULL, `trigger` VARCHAR(256) NOT NULL, event INT NOT NULL, FOREIGN KEY(event) REFERENCES EVENT(event_id) ON DELETE CASCADE)";
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log('Created ALARM');
+  });
+  connection.end();
+});
 
 app.use(fileUpload());
 

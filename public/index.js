@@ -265,7 +265,23 @@ $(document).ready(function() {
 
   });
 
-});
+  //Event listener for login
+  $('#loginForm').submit(function(e){
+
+    var username = $('loginUsername').val();
+    var password = $('loginPassword
+    ')
+    //Make ajax post request
+    $.ajax({
+      type: 'post',            //Request type
+      url: '/addEvent',   //The server endpoint we are connecting to
+      data: {filename : filename, eventUID : eventUID, eventSummary : summary, date : date, time : time, isUTC : isUTC},
+      success: function(data){
+
+      }
+
+    });
+  });
 
 //Sends alarms to status panel
 function sendAlarm(filename, eventNum){
