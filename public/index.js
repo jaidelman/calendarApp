@@ -269,13 +269,15 @@ $(document).ready(function() {
   $('#loginForm').submit(function(e){
 
     var username = $('loginUsername').val();
-    var password = $('loginPassword
-    ')
+    var password = $('loginPassword').val();
+    var dbName = $('loginDbName').val();
+
     //Make ajax post request
     $.ajax({
+
       type: 'post',            //Request type
-      url: '/addEvent',   //The server endpoint we are connecting to
-      data: {filename : filename, eventUID : eventUID, eventSummary : summary, date : date, time : time, isUTC : isUTC},
+      url: '/login',   //The server endpoint we are connecting to
+      data: {username : username, password : password, dbName : dbName},
       success: function(data){
 
       }
