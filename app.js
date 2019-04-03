@@ -41,6 +41,12 @@ app.get('/index.js',function(req,res){
 
 var statusPanel = ''; //Store what's in the status panel on refresh
 
+//Store db info
+var dbUsername = 'jaidelma';
+var dbPassword = '1000139';
+var dbName = 'jaidelma';
+var isLoggedIn = true;
+
 //Load in library
 var libcal = ffi.Library('./libcal', {
   'icalToJSON' : ['string', ['string']],
@@ -77,7 +83,7 @@ app.post('/upload', function(req, res) {
       else{
         statusPanel += '<h6>' + uploadFile.name + ' is an invalid calendar</h6>';
       }
-  res.redirect('/');
+      res.redirect('/');
 
     });
 
@@ -321,32 +327,142 @@ app.get('/getFiles', function(req, res){
 
 });
 
+app.post('/storeFiles', function(req, res){
+
+  var files = fs.readdirSync(__dirname + '/uploads/');
+  var filename;
+  var fileJSON;
+  var eventListJSON;
+  var propListJSON;
+  var fileObject;
+  var eventObject;
+  var propObject;
+  var dtObject;
+
+  var fileHeader = '(file_Name, version, prod_id)';
+  var fileData;
+
+  var eventData;
+  var startTime;
+  var location;
+  var organizer;
+
+  //Connect to database
+  const connection = mysql.createConnection({
+    host : 'dursley.socs.uoguelph.ca',
+    user : dbUsername,
+    password : dbPassword,
+    database : dbName
+  });
+
+  //Check for empty table
+  if(files.length == 0){
+    statusPanel += '<h6>No Files To Store</h6>';
+  }
+
+  connection.connect(function(err){
+
+    //Loop through all files
+    for(var i = 0; i<files.length; i++){
+
+      //Get JSON of file
+      fileJSON = libcal.icalToJSON('./uploads/' + files[i]);
+      fileObject = JSON.parse(fileJSON);
+
+      //If valid file
+      if(fileJSON != ""){
+
+        //Set up data
+        fileData = "(\'" + files[i] + '\',\'' + fileObject.version + '\',\'' + fileObject.prodID + '\');';
+
+        filename = files[i]
+
+        //Connect and add to file database
+        var sql = "INSERT INTO FILE " + fileHeader + " VALUES " + fileData;
+        connection.query(sql, [filename], function (err, result){
+          if(err){}
+          else{
+            var eventHeader = '(summary, start_time, location, organizer, cal_file)';
+
+            //Add events
+            eventListJSON = libcal.eventListWrapper('./uploads/' + filename);
+            eventObject = JSON.parse(eventListJSON);
+
+            for(var j = 0; j < eventObject.length; j++){
+
+              propListJSON = libcal.propListWrapper('./uploads/' + filename, j);
+              propObject = JSON.parse(propListJSON);
+
+              location = null;
+              organizer = null;
+              for(var k = 0; k < propObject.length; k++){
+                if(propObject[k].propName === 'LOCATION' || propObject[k].propName === 'location') location = propObject[k].propDescr;
+                if(propObject[k].propName === 'ORGANIZER' || propObject[k].propName === 'organizer') organizer = propObject[k].propDescr;
+              }
+
+              dtObject = eventObject[j].startDT;
+
+              var date = dtObject.date;
+              var time = dtObject.time;
+
+              startTime = date.slice(0, 4) + '-' + date.slice(4,6) + '-' + date.slice(6,8) + ' ' + time.slice(0,2) + ':' + time.slice(2,4) + ':' + time.slice(4,6);
+              eventData = "(\'" + eventObject.summary + '\',\'' + startTime + '\',\'' + location + '\',\'' + organizer + '\',\'' + i + '\');';
+
+              var sql = "INSERT INTO EVENT " + eventHeader + " VALUES " + eventData;
+              connection.query(sql, function(err, result){
+                if(err){throw err;}
+              });
+            }
+          }
+
+        });
+      }
+    }
+
+    if(isLoggedIn) statusPanel += '<h6>Uploaded files to database</h6>';
+    else statusPanel += '<h6>Error uploading files, you are not logged in!</h6>';
+  });
+
+  res.redirect('/');
+});
+
 app.post('/login', function(req, res){
+
+  dbUsername = req.body.username;
+  dbPassword = req.body.password;
+  dbName = req.body.dbName;
 
   const connection = mysql.createConnection({
     host : 'dursley.socs.uoguelph.ca',
-    user : req.query.username,
-    password : req.query.password,
-    database : req.query.dbName
+    user : dbUsername,
+    password : dbPassword,
+    database : dbName
   });
 
   //Connect to database
   connection.connect(function(err) {
-    console.log("Connected!");
     var sql = "CREATE TABLE IF NOT EXISTS FILE(cal_id INT AUTO_INCREMENT PRIMARY KEY, file_Name VARCHAR(60) NOT NULL, version INT NOT NULL, prod_id VARCHAR(256) NOT NULL)";
     connection.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log('Created FILE');
+      if (err){
+        statusPanel += '<h6>Failed to log in</h6>';
+      }
+      else{
+        statusPanel += '<h6>Connected to database!</h6>';
+        isLoggedIn = true;
+      }
+
     });
-    sql = "CREATE TABLE IF NOT EXISTS EVENT(Event_id INT AUTO_INCREMENT PRIMARY KEY, summary VARCHAR(1024), start_time DATETIME NOT NULL, location VARCHAR(60), organizer VARCHAR(256), cal_file INT NOT NULL, FOREIGN KEY(cal_file) REFERENCES FILE(cal_id) ON DELETE CASCADE)";
+    sql = "CREATE TABLE IF NOT EXISTS EVENT(event_id INT AUTO_INCREMENT PRIMARY KEY, summary VARCHAR(1024), start_time DATETIME NOT NULL, location VARCHAR(60), organizer VARCHAR(256), cal_file INT NOT NULL, FOREIGN KEY(cal_file) REFERENCES FILE(cal_id) ON DELETE CASCADE)";
     connection.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log('Created EVENT');
+      if (err){
+
+      }
     });
     sql = "CREATE TABLE IF NOT EXISTS ALARM(alarm_id INT AUTO_INCREMENT PRIMARY KEY, action VARCHAR(256) NOT NULL, `trigger` VARCHAR(256) NOT NULL, event INT NOT NULL, FOREIGN KEY(event) REFERENCES EVENT(event_id) ON DELETE CASCADE)";
     connection.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log('Created ALARM');
+      if (err){
+
+      }
     });
     connection.end();
   });

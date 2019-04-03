@@ -90,6 +90,19 @@ $(document).ready(function() {
     $('h6').remove(); //All text added to status panel will be of type <h6>
   });
 
+  //On click store files
+  $('#storeFiles').on('click', function(e){
+
+    $.ajax({
+      type: 'post',
+      url: '/storeFiles',
+      success: function(data){
+
+      }
+    });
+
+  });
+
   //Dropdown Menu listener
   $('#selectDropdown').on("change", function(){
 
@@ -268,9 +281,9 @@ $(document).ready(function() {
   //Event listener for login
   $('#loginForm').submit(function(e){
 
-    var username = $('loginUsername').val();
-    var password = $('loginPassword').val();
-    var dbName = $('loginDbName').val();
+    var username = $('#loginUsername').val();
+    var password = $('#loginPassword').val();
+    var dbName = $('#loginDbName').val();
 
     //Make ajax post request
     $.ajax({
@@ -284,6 +297,8 @@ $(document).ready(function() {
 
     });
   });
+
+});
 
 //Sends alarms to status panel
 function sendAlarm(filename, eventNum){
