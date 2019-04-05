@@ -488,13 +488,13 @@ app.post('/storeFiles', function(req, res){
         })(filename, count);
         count++; //Increment count
       }
+      if(isLoggedIn && files.length != 0) statusPanel += '<h6>Uploaded files to database</h6>';
+      else if(!isLoggedIn) statusPanel += '<h6>Error uploading files, you are not logged in!</h6>';
+      res.redirect('/');
     }
 
-    if(isLoggedIn && files.length != 0) statusPanel += '<h6>Uploaded files to database</h6>';
-    else if(!isLoggedIn) statusPanel += '<h6>Error uploading files, you are not logged in!</h6>';
-
   });
-  res.redirect('/');
+
 });
 
 //Remove files from db request

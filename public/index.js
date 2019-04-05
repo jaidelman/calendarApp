@@ -85,6 +85,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       url: '/storeFiles',
+      async: false,
       success: function(data){
 
       }
