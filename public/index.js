@@ -34,6 +34,17 @@ $(document).ready(function() {
 
   });
 
+  $.ajax({
+    type: 'get',
+    url: '/hideDatabase',
+    success: function(data){
+
+      if(data) document.getElementById('database').style.visibility = 'visible';
+      else document.getElementById('database').style.visibility = 'hidden';
+      
+    }
+  });
+
   //Fill Calendar View and Add EventDropdown Menu
   $.ajax({
     type: 'get',

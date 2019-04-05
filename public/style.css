@@ -70,3 +70,7 @@ div.smallScroll{
   text-align : center;
   display : inline-block;
 }
+
+#database{
+  visibility:hidden;
+}

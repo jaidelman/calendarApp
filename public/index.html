@@ -59,15 +59,15 @@
     </div>
   </div>
   <br>
-    <!-- Upload File Button -->
-    <form enctype="multipart/form-data" method="post" action="/upload" id="uploadButton">
-      <input type="file" name="uploadFile"/>
-      <br>
-      <div style="float:left;">
-        <input type="submit" value="Upload">
-      </div>
-    </form>
-    <br><hr>
+  <!-- Upload File Button -->
+  <form enctype="multipart/form-data" method="post" action="/upload" id="uploadButton">
+    <input type="file" name="uploadFile"/>
+    <br>
+    <div style="float:left;">
+      <input type="submit" value="Upload">
+    </div>
+  </form>
+  <br><hr>
   <!-- Calendar View Panel -->
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -163,45 +163,47 @@
     </div>
     <br><br>
     <!-- Database Table -->
-    <div class="scroll">
-      <table class="table-striped" id>
-        <thead id="dbHeader">
-          <tr>
+    <div id="dbPanel">
+      <div class="scroll">
+        <table class="table-striped" id>
+          <thead id="dbHeader">
+            <tr>
 
-          </tr>
-        </thead>
-        <tbody id="dbbody">
+            </tr>
+          </thead>
+          <tbody id="dbbody">
 
-        </tbody>
-      </table>
-    </div>
-    <br>
-    <h3><u>Execute Query</u></h3>
-    <!-- Query Buttons -->
-    <div id="container">
-      <button type="button" class="btn btn-secondary" id="startDtEvents">Display Events Sorted by Start Date</button>
-      <button type="button" class="btn btn-secondary" id="conflictingEvents">Display Conflicting Events</button>
-      <button type="button" class="btn btn-secondary" id="sameLocation">Display All Events With The Same Location</button>
-    </div><br><br>
-    <!-- Database File Dropdown -->
+          </tbody>
+        </table>
+      </div>
+      <br>
+      <h3><u>Execute Query</u></h3>
+      <!-- Query Buttons -->
+      <div id="container">
+        <button type="button" class="btn btn-secondary" id="startDtEvents">Display Events Sorted by Start Date</button>
+        <button type="button" class="btn btn-secondary" id="conflictingEvents">Display Conflicting Events</button>
+        <button type="button" class="btn btn-secondary" id="sameLocation">Display All Events With The Same Location</button>
+      </div><br><br>
+      <!-- Database File Dropdown -->
+      <div>
+        <select id="dbDropdown">
+
+        </select>
+      </div>
+      <div id="container">
+        <button type="button" class="btn btn-secondary" id="allEvents">Display All Events From Selected File</button>
+        <button type="button" class="btn btn-secondary" id="allAlarms">Display All Alarms From Selected File</button>
+      </div>
+    </div><br>
+    <!-- -->
     <div>
-      <select id="dbDropdown">
-
-      </select>
+      <pre>Start Date&#9;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Date</pre>
+      <form>
+        <input type="date" id="dbStartDate" name="dbStartDate">
+        <input type="date" id="dbEndDate" name="dbStartDate"><br>
+        <button type="button" class="btn btn-secondary" id="betweenForm">Display All Events Between These Dates</button>
+      </form>
     </div>
-    <div id="container">
-      <button type="button" class="btn btn-secondary" id="allEvents">Display All Events From Selected File</button>
-      <button type="button" class="btn btn-secondary" id="allAlarms">Display All Alarms From Selected File</button>
-    </div>
-  </div><br>
-  <!-- -->
-  <div>
-    <pre>Start Date&#9;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Date</pre>
-    <form>
-      <input type="date" id="dbStartDate" name="dbStartDate">
-      <input type="date" id="dbEndDate" name="dbStartDate"><br>
-      <button type="button" class="btn btn-secondary" id="betweenForm">Display All Events Between These Dates</button>
-    </form>
   </div>
 </div>
 <!-- Leave me at the bottom of body -->

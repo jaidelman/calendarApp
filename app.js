@@ -42,10 +42,10 @@ app.get('/index.js',function(req,res){
 let statusPanel = ''; //Store what's in the status panel on refresh
 
 //Store db info
-let dbUsername = 'jaidelma';
-let dbPassword = '1000139';
-let dbName = 'jaidelma';
-let isLoggedIn = true;
+let dbUsername;
+let dbPassword;
+let dbName;
+let isLoggedIn = false;
 
 //Load in library
 let libcal = ffi.Library('./libcal', {
@@ -706,6 +706,12 @@ app.get('/getEventsSameLocation', function(req, res){
       });
     });
   }
+});
+
+app.get('/hideDatabase', function(req, res){
+
+  if(isLoggedIn) res.send(true);
+  else res.send(false);
 });
 
 app.get('/getAllEvents', function(req, res){
