@@ -2,17 +2,6 @@
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
 
-  //CREATE CALENDAR MENUS
-  //Load years
-  for(i = 2000; i<2099; i++){
-    $('#yearDropdown').append('<option>' + i + '</option>');
-  }
-
-  //Load days
-  for(i = 1; i<31; i++){
-    $('#dayDropdown').append('<option>' + i + '</option>');
-  }
-
   //Fill File Log Panel
   $.ajax({
     type: 'get',
@@ -20,7 +9,7 @@ $(document).ready(function() {
     url: '/getFiles', //Get files from server
     success: function (data) {
 
-     //If files exist
+      //If files exist
       if(data.length > 0){
 
         //Loop through and put all files in table
@@ -90,7 +79,7 @@ $(document).ready(function() {
     $('h6').remove(); //All text added to status panel will be of type <h6>
   });
 
-  //On click store files
+  //Store files event listener
   $('#storeFiles').on('click', function(e){
 
     $.ajax({
@@ -100,6 +89,300 @@ $(document).ready(function() {
 
       }
     });
+
+  });
+
+  //Remove files event listener
+  $('#removeFiles').on('click', function(e){
+
+    var confirmed = confirm("Are you sure you would like to remove all files from your database? This cannot be undone.");
+
+    $.ajax({
+      type: 'post',
+      url: '/removeFiles',
+      data: {confirmed : confirmed},
+      success: function(data){
+
+      }
+    });
+
+  });
+
+  //Event listener for database status
+  $('#dbStatus').on('click', function(e){
+
+    $.ajax({
+      type: 'get',
+      url: '/dbStatus',
+      async: false,
+      success: function(data){
+
+      }
+    });
+
+  });
+
+  //Event listener for sort by start DT
+  $('#startDtEvents').on('click', function(){
+
+    $.ajax({
+      type: 'get',
+      url: '/getEventsStartTime',
+      success: function(data){
+
+        $('#dbHeader').html('');
+        $('#dbbody').html('');
+        var date; //Stores date to print
+
+        //If data exists
+        if(data.length != 0){
+
+          $('#dbHeader').html('<th>Event ID</th><th>Summary</th><th>Start Time</th><th>Location</th><th>Organizer</th><th>Calendar File</th>');
+
+          for(var i = 0; i<data.length; i++){
+
+            if(data[i].summary == null) data[i].summary = '';
+            if(data[i].location == null) data[i].location = '';
+            if(data[i].organizer == null) data[i].organizer = '';
+
+            date = data[i].start_time.slice(0,10) + ' ' + data[i].start_time.slice(11, 19);
+            $('#dbbody').append('<tr><td>' + data[i].event_id + '</td><td>' + data[i].summary + '</td><td>' + date + '</td><td>' + data[i].location + '</td><td>' + data[i].organizer + '</td><td>' + data[i].cal_file + '</td></tr>');
+          }
+        }
+        //If not
+        else{
+          alert('No Events Exist in Database');
+        }
+
+      }
+    });
+
+  });
+
+  //Event listener for show all events with same location
+  $('#sameLocation').on('click', function(){
+
+    $.ajax({
+      type: 'get',
+      url: '/getEventsSameLocation',
+      async: false,
+      success: function(data){
+
+        $('#dbHeader').html('');
+        $('#dbbody').html('');
+        var date; //Stores date to print
+
+        //If data exists
+        if(data.length != 0){
+
+          $('#dbHeader').html('<th>Event ID</th><th>Summary</th><th>Start Time</th><th>Location</th><th>Organizer</th><th>Calendar File</th>');
+
+          for(var i = 0; i<data.length; i++){
+
+            if(data[i].summary == null) data[i].summary = '';
+            if(data[i].location == null) data[i].location = '';
+            if(data[i].organizer == null) data[i].organizer = '';
+
+            date = data[i].start_time.slice(0,10) + ' ' + data[i].start_time.slice(11, 19);
+            $('#dbbody').append('<tr><td>' + data[i].event_id + '</td><td>' + data[i].summary + '</td><td>' + date + '</td><td>' + data[i].location + '</td><td>' + data[i].organizer + '</td><td>' + data[i].cal_file + '</td></tr>');
+          }
+        }
+        //If not
+        else{
+          alert('No events have the same location');
+        }
+
+      }
+    });
+
+  });
+
+
+  //Event listener for conflicting events
+  $('#conflictingEvents').on('click', function(){
+
+    $.ajax({
+      type: 'get',
+      url: '/getConflicting',
+      async:false,
+      success: function(data){
+
+        $('#dbHeader').html('');
+        $('#dbbody').html('');
+        var date; //Stores date to print
+
+        //If data exists
+        if(data.length != 0){
+
+          $('#dbHeader').html('<th>Event ID</th><th>Summary</th><th>Start Time</th><th>Location</th><th>Organizer</th><th>Calendar File</th>');
+
+          for(var i = 0; i<data.length; i++){
+
+            if(data[i].summary == null) data[i].summary = '';
+            if(data[i].location == null) data[i].location = '';
+            if(data[i].organizer == null) data[i].organizer = '';
+
+            date = data[i].start_time.slice(0,10) + ' ' + data[i].start_time.slice(11, 19);
+            $('#dbbody').append('<tr><td>' + data[i].event_id + '</td><td>' + data[i].summary + '</td><td>' + date + '</td><td>' + data[i].location + '</td><td>' + data[i].organizer + '</td><td>' + data[i].cal_file + '</td></tr>');
+          }
+        }
+        //If not
+        else{
+          alert('No events are conflicting');
+        }
+
+      }
+    });
+
+  });
+
+  //Event Listener for All Events from Selected File
+  $('#allEvents').on('click', function(){
+
+    let selected = $('#dbDropdown').find(':selected').val(); //Get selected calendar
+
+    $.ajax({
+      type: 'get',
+      url: '/getAllEvents',
+      data: {filename : selected},
+      success: function(data){
+
+        $('#dbHeader').html('');
+        $('#dbbody').html('');
+        var date; //Stores date to print
+
+        //If data exists
+        if(data.length != 0){
+
+          $('#dbHeader').html('<th>Event ID</th><th>Summary</th><th>Start Time</th><th>Location</th><th>Organizer</th><th>Calendar File</th>');
+
+          for(var i = 0; i<data.length; i++){
+
+            if(data[i].summary == null) data[i].summary = '';
+            if(data[i].location == null) data[i].location = '';
+            if(data[i].organizer == null) data[i].organizer = '';
+
+            date = data[i].start_time.slice(0,10) + ' ' + data[i].start_time.slice(11, 19);
+            $('#dbbody').append('<tr><td>' + data[i].event_id + '</td><td>' + data[i].summary + '</td><td>' + date + '</td><td>' + data[i].location + '</td><td>' + data[i].organizer + '</td><td>' + data[i].cal_file + '</td></tr>');
+          }
+        }
+        //If not
+        else{
+          alert('This File Has No Events');
+        }
+
+      }
+    });
+
+  });
+
+  //Event Listener for All Alarms from Selected File
+  $('#allAlarms').on('click', function(){
+
+    let selected = $('#dbDropdown').find(':selected').val(); //Get selected calendar
+
+    $.ajax({
+      type: 'get',
+      url: '/getAllAlarms',
+      data: {filename : selected},
+      success: function(data){
+
+        $('#dbHeader').html('');
+        $('#dbbody').html('');
+
+        //If data exists
+        if(data.length != 0){
+
+          $('#dbHeader').html('<th>Alarm ID</th><th>Action</th><th>Trigger</th><th>Event ID</th></th>');
+
+          for(var i = 0; i<data.length; i++){
+
+            $('#dbbody').append('<tr><td>' + data[i].alarm_id + '</td><td>' + data[i].action + '</td><td>' + data[i].trigger + '</td><td>' + data[i].event + '</td></tr>');
+          }
+        }
+        //If not
+        else{
+          alert('This File Has No Alarms');
+        }
+
+      }
+    });
+
+  });
+
+  $('#betweenForm').on('click', function(){
+
+    var startDate = $('#dbStartDate').val();
+    var endDate = $('#dbEndDate').val();
+
+    if(startDate.length < 10){
+      addToStatusPanel('<h6>Error: Invalid Start Date</h6>');
+    }
+    else if(endDate.length < 10){
+      addToStatusPanel('<h6>Error: Invalid End Date</h6>');
+    }
+    else{
+
+      $.ajax({
+
+        type: 'get',
+        data: {startDate : startDate, endDate : endDate},
+        url: '/betweenDates',
+        success: function(data){
+
+          $('#dbHeader').html('');
+          $('#dbbody').html('');
+          var date; //Stores date to print
+
+          //If data exists
+          if(data.length != 0){
+
+            $('#dbHeader').html('<th>Event ID</th><th>Summary</th><th>Start Time</th><th>Location</th><th>Organizer</th><th>Calendar File</th>');
+
+            for(var i = 0; i<data.length; i++){
+
+              date = data[i].start_time.slice(0,10) + ' ' + data[i].start_time.slice(11, 19);
+              $('#dbbody').append('<tr><td>' + data[i].event_id + '</td><td>' + data[i].summary + '</td><td>' + date + '</td><td>' + data[i].location + '</td><td>' + data[i].organizer + '</td><td>' + data[i].cal_file + '</td></tr>');
+            }
+          }
+          //If not
+          else{
+            alert('No events found between ' + startDate + ' and ' + endDate);
+          }
+        }
+      });
+    }
+
+  });
+
+  //Fill Calendar View and Add EventDropdown Menu
+  $.ajax({
+    type: 'get',
+    dataType: 'json', //Returns a JSON
+    url: '/getDbFiles', //Get files from server
+    success: function (data) {
+
+      $('#dbDropdown').html('<option>Select a calendar...</option>');
+
+      //If files exist, populate table
+      if(data.length > 0){
+
+        //Loop through and put all files in dropdown
+        for(i = 0; i < data.length; i++){
+
+          //If not invalid, add to dropdown
+          if(data[i].prodID != "Invalid File"){
+            $('#dbDropdown').append('<option>' + data[i].file_Name + '</option>');
+          }
+
+        }
+      }
+
+    },
+    fail: function(error) {
+      // Non-200 return, do something with error
+      console.log(error);
+    }
 
   });
 

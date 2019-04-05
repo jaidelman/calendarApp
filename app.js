@@ -39,16 +39,16 @@ app.get('/index.js',function(req,res){
   });
 });
 
-var statusPanel = ''; //Store what's in the status panel on refresh
+let statusPanel = ''; //Store what's in the status panel on refresh
 
 //Store db info
-var dbUsername = 'jaidelma';
-var dbPassword = '1000139';
-var dbName = 'jaidelma';
-var isLoggedIn = true;
+let dbUsername = 'jaidelma';
+let dbPassword = '1000139';
+let dbName = 'jaidelma';
+let isLoggedIn = true;
 
 //Load in library
-var libcal = ffi.Library('./libcal', {
+let libcal = ffi.Library('./libcal', {
   'icalToJSON' : ['string', ['string']],
   'eventListWrapper' : ['string', ['string']],
   'alarmListWrapper' : ['string', ['string', 'int']],
@@ -73,7 +73,7 @@ app.post('/upload', function(req, res) {
         return res.status(500).send(err);
       }
 
-      var isValid = libcal.icalToJSON('./uploads/' + uploadFile.name);
+      let isValid = libcal.icalToJSON('./uploads/' + uploadFile.name);
 
       //If valid, succes!
       if(isValid != ""){
@@ -111,32 +111,32 @@ app.get('/uploads/:name', function(req , res){
 });
 
 //******************** Your code goes here ********************
-var bodyParser = require('body-parser');
+let bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 //Add calendar file
 app.post('/addCalendar', function(req, res){
 
-  var filename = './uploads/' + req.body.filename;
-  var version = req.body.version;
-  var prodID = req.body.prodID;
-  var eventUID = req.body.eventUID;
-  var eventSummary = req.body.eventSummary;
-  var date = req.body.date;
-  var time = req.body.time;
-  var isUTC = req.body.isUTC;
+  let filename = './uploads/' + req.body.filename;
+  let version = req.body.version;
+  let prodID = req.body.prodID;
+  let eventUID = req.body.eventUID;
+  let eventSummary = req.body.eventSummary;
+  let date = req.body.date;
+  let time = req.body.time;
+  let isUTC = req.body.isUTC;
 
   //Get creation date
-  var today = new Date();
-  var year = today.getFullYear();
-  var month = (today.getMonth()+1);
-  var day = today.getDate();
+  let today = new Date();
+  let year = today.getFullYear();
+  let month = (today.getMonth()+1);
+  let day = today.getDate();
 
   //Get creation time
-  var hour = today.getHours();
-  var minutes = today.getMinutes();
-  var seconds = today.getSeconds();
+  let hour = today.getHours();
+  let minutes = today.getMinutes();
+  let seconds = today.getSeconds();
 
   //Add 0 in front of month
   if(month < 10){
@@ -164,7 +164,7 @@ app.post('/addCalendar', function(req, res){
   }
 
   //Build string
-  var startDT = date.slice(0, 4) + date.slice(5, 7) + date.slice(8, 10) + 'T' + time.slice(0, 2) + time.slice(3, 5) + time.slice(6, 8);
+  let startDT = date.slice(0, 4) + date.slice(5, 7) + date.slice(8, 10) + 'T' + time.slice(0, 2) + time.slice(3, 5) + time.slice(6, 8);
 
   //If utc, add a Z
   if(isUTC == 'true'){
@@ -172,7 +172,7 @@ app.post('/addCalendar', function(req, res){
   }
 
   //Build creation date
-  var creationDT = year + month + day + 'T' + hour + minutes + seconds;
+  let creationDT = year + month + day + 'T' + hour + minutes + seconds;
 
   //Create calendar
   libcal.calendarForm(filename, version, prodID, eventUID, eventSummary, startDT, creationDT);
@@ -184,23 +184,23 @@ app.post('/addCalendar', function(req, res){
 //Add event to file
 app.post('/addEvent', function(req, res){
 
-  var filename = './uploads/' + req.body.filename;
-  var eventUID = req.body.eventUID;
-  var eventSummary = req.body.eventSummary;
-  var date = req.body.date;
-  var time = req.body.time;
-  var isUTC = req.body.isUTC;
+  let filename = './uploads/' + req.body.filename;
+  let eventUID = req.body.eventUID;
+  let eventSummary = req.body.eventSummary;
+  let date = req.body.date;
+  let time = req.body.time;
+  let isUTC = req.body.isUTC;
 
   //Get creation date
-  var today = new Date();
-  var year = today.getFullYear();
-  var month = (today.getMonth()+1);
-  var day = today.getDate();
+  let today = new Date();
+  let year = today.getFullYear();
+  let month = (today.getMonth()+1);
+  let day = today.getDate();
 
   //Get creation time
-  var hour = today.getHours();
-  var minutes = today.getMinutes();
-  var seconds = today.getSeconds();
+  let hour = today.getHours();
+  let minutes = today.getMinutes();
+  let seconds = today.getSeconds();
 
   //Add 0 in front of month
   if(month < 10){
@@ -228,7 +228,7 @@ app.post('/addEvent', function(req, res){
   }
 
   //Build start date
-  var startDT = date.slice(0, 4) + date.slice(5, 7) + date.slice(8, 10) + 'T' + time.slice(0, 2) + time.slice(3, 5) + time.slice(6, 8);
+  let startDT = date.slice(0, 4) + date.slice(5, 7) + date.slice(8, 10) + 'T' + time.slice(0, 2) + time.slice(3, 5) + time.slice(6, 8);
 
   //Add Z if it is UTC
   if(isUTC == 'true'){
@@ -236,7 +236,7 @@ app.post('/addEvent', function(req, res){
   }
 
   //Build creationDT
-  var creationDT = year + month + day + 'T' + hour + minutes + seconds;
+  let creationDT = year + month + day + 'T' + hour + minutes + seconds;
 
   //Add event to cal
   libcal.addEventToCal(filename, eventUID, eventSummary, startDT, creationDT);
@@ -261,9 +261,9 @@ app.post('/statusPanel', function(req, res){
 //Get alarmList JSON
 app.get('/getAlarmList', function(req, res){
 
-  var alarmList;
-  var filename = req.query.filename;
-  var eventNum = req.query.eventNum;
+  let alarmList;
+  let filename = req.query.filename;
+  let eventNum = req.query.eventNum;
 
   alarmList = libcal.alarmListWrapper('./uploads/' + filename, eventNum);
 
@@ -273,9 +273,9 @@ app.get('/getAlarmList', function(req, res){
 //Get propertyList JSON
 app.get('/getPropertyList', function(req, res){
 
-  var propList;
-  var filename = req.query.filename;
-  var eventNum = req.query.eventNum;
+  let propList;
+  let filename = req.query.filename;
+  let eventNum = req.query.eventNum;
 
   propList = libcal.propListWrapper('./uploads/' + filename, eventNum);
 
@@ -285,8 +285,8 @@ app.get('/getPropertyList', function(req, res){
 //Get Event List JSON
 app.get('/getEventList', function(req, res){
 
-  var eventList;
-  var filename = req.query.filename;
+  let eventList;
+  let filename = req.query.filename;
 
   eventList = libcal.eventListWrapper('./uploads/' + filename);
 
@@ -297,13 +297,13 @@ app.get('/getEventList', function(req, res){
 //Get Files from server
 app.get('/getFiles', function(req, res){
 
-  var files = fs.readdirSync(__dirname + '/uploads/');
-  var toSend = '[';
-  var invalidFile = '{\"version\":0,\"prodID\":\"Invalid File\",\"numProps\":0,\"numEvents\":0,\"filename\":\"';
-  var fileToJSON;
+  let files = fs.readdirSync(__dirname + '/uploads/');
+  let toSend = '[';
+  let invalidFile = '{\"version\":0,\"prodID\":\"Invalid File\",\"numProps\":0,\"numEvents\":0,\"filename\":\"';
+  let fileToJSON;
 
   //Put JSONs in toSend
-  for(var i = 0; i<files.length; i++){
+  for(let i = 0; i<files.length; i++){
 
     //Get JSON of file
     fileToJSON = libcal.icalToJSON('./uploads/' + files[i]);
@@ -329,23 +329,37 @@ app.get('/getFiles', function(req, res){
 
 app.post('/storeFiles', function(req, res){
 
-  var files = fs.readdirSync(__dirname + '/uploads/');
-  var filename;
-  var fileJSON;
-  var eventListJSON;
-  var propListJSON;
-  var fileObject;
-  var eventObject;
-  var propObject;
-  var dtObject;
+  //Array of files and current filename
+  let files = fs.readdirSync(__dirname + '/uploads/');
+  let filename;
 
-  var fileHeader = '(file_Name, version, prod_id)';
-  var fileData;
+  //All List JSONS
+  let fileJSON;
+  let eventListJSON;
+  let propListJSON;
+  let alarmListJSON;
 
-  var eventData;
-  var startTime;
-  var location;
-  var organizer;
+  //All objects
+  let fileObject;
+  let eventObject;
+  let propObject;
+  let dtObject;
+  let alarmObject;
+
+  //File header/data for SQL Insert
+  let fileHeader = '(file_Name, version, prod_id)';
+  let fileData;
+
+  //letiables for event data for SQL insert
+  let eventData;
+  let startTime;
+  let location;
+  let organizer;
+
+  let alarmData;
+
+  let count = 0; //See which file we are one (in case of invalid files)
+  let totalEvents = 0;
 
   //Connect to database
   const connection = mysql.createConnection({
@@ -362,72 +376,431 @@ app.post('/storeFiles', function(req, res){
 
   connection.connect(function(err){
 
+    //Empty database to ensure no duplicates
+    let sql = "DELETE FROM FILE;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    //Reset auto-increment for file
+    sql = "ALTER TABLE FILE AUTO_INCREMENT = 1;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    //Reset auto-increment for event
+    sql = "ALTER TABLE EVENT AUTO_INCREMENT = 1;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    //Reset auto-increment for alarm
+    sql = "ALTER TABLE ALARM AUTO_INCREMENT = 1;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
     //Loop through all files
-    for(var i = 0; i<files.length; i++){
+    for(let i = 0; i<files.length; i++){
 
       //Get JSON of file
       fileJSON = libcal.icalToJSON('./uploads/' + files[i]);
-      fileObject = JSON.parse(fileJSON);
 
       //If valid file
       if(fileJSON != ""){
 
+        fileObject = JSON.parse(fileJSON);
+
         //Set up data
         fileData = "(\'" + files[i] + '\',\'' + fileObject.version + '\',\'' + fileObject.prodID + '\');';
 
-        filename = files[i]
+        filename = files[i];
 
         //Connect and add to file database
-        var sql = "INSERT INTO FILE " + fileHeader + " VALUES " + fileData;
-        connection.query(sql, [filename], function (err, result){
-          if(err){}
-          else{
-            var eventHeader = '(summary, start_time, location, organizer, cal_file)';
+        sql = "INSERT INTO FILE " + fileHeader + " VALUES " + fileData;
 
-            //Add events
-            eventListJSON = libcal.eventListWrapper('./uploads/' + filename);
-            eventObject = JSON.parse(eventListJSON);
+        (function(filename, count){
 
-            for(var j = 0; j < eventObject.length; j++){
+          connection.query(sql, [filename, count], function (err, result){
 
-              propListJSON = libcal.propListWrapper('./uploads/' + filename, j);
-              propObject = JSON.parse(propListJSON);
+            if(err){}
+            else{
+              let eventHeader = '(summary, start_time, location, organizer, cal_file)';
 
-              location = null;
-              organizer = null;
-              for(var k = 0; k < propObject.length; k++){
-                if(propObject[k].propName === 'LOCATION' || propObject[k].propName === 'location') location = propObject[k].propDescr;
-                if(propObject[k].propName === 'ORGANIZER' || propObject[k].propName === 'organizer') organizer = propObject[k].propDescr;
+              //Add events
+              eventListJSON = libcal.eventListWrapper('./uploads/' + filename);
+              eventObject = JSON.parse(eventListJSON);
+
+              for(let j = 0; j < eventObject.length; j++){
+
+                propListJSON = libcal.propListWrapper('./uploads/' + filename, j+1);
+                propObject = JSON.parse(propListJSON);
+
+                location = null;
+                organizer = null;
+                for(let k = 0; k < propObject.length; k++){
+                  if(propObject[k].propName === 'LOCATION' || propObject[k].propName === 'location') location = propObject[k].propDescr;
+                  if(propObject[k].propName === 'ORGANIZER' || propObject[k].propName === 'organizer') organizer = propObject[k].propDescr;
+                }
+
+                dtObject = eventObject[j].startDT;
+                if(!eventObject[j].summary){
+                  eventObject[j].summary = null;
+                }
+
+                let date = dtObject.date;
+                let time = dtObject.time;
+
+                startTime = date.slice(0, 4) + '-' + date.slice(4,6) + '-' + date.slice(6,8) + ' ' + time.slice(0,2) + ':' + time.slice(2,4) + ':' + time.slice(4,6);
+
+                if(location) eventData = "(\'" + eventObject[j].summary + '\',\'' + startTime + '\',\'' + location + '\',\'' + organizer + '\',\'' + (count+1) + '\');';
+                else eventData = "(\'" + eventObject[j].summary + '\',\'' + startTime + '\',' + location + ',\'' + organizer + '\',\'' + (count+1) + '\');';
+
+                sql = "INSERT INTO EVENT " + eventHeader + " VALUES " + eventData;
+
+                (function(filename, totalEvents){
+                  connection.query(sql, function(err, result){
+
+                    if(err){}
+                    else{
+
+                      let alarmHeader = "(action, `trigger`, event)";
+                      alarmListJSON = libcal.alarmListWrapper('./uploads/' + filename, j+1);
+                      alarmObject = JSON.parse(alarmListJSON);
+
+                      for(let f = 0; f<alarmObject.length; f++){
+                        alarmData = "(\'" + alarmObject[f].action + '\',\'' + alarmObject[f].trigger + '\',\'' + (totalEvents+1) + '\');';
+                        sql = "INSERT INTO ALARM " + alarmHeader + " VALUES " + alarmData;
+
+                        (function(){
+                          connection.query(sql, function(err, result){
+                            if(err){console.log(err);}
+                          });
+                        })();
+                      }
+                    }
+                  });
+                })(filename, totalEvents);
+                totalEvents++; //Increment total events
               }
-
-              dtObject = eventObject[j].startDT;
-
-              var date = dtObject.date;
-              var time = dtObject.time;
-
-              startTime = date.slice(0, 4) + '-' + date.slice(4,6) + '-' + date.slice(6,8) + ' ' + time.slice(0,2) + ':' + time.slice(2,4) + ':' + time.slice(4,6);
-              eventData = "(\'" + eventObject.summary + '\',\'' + startTime + '\',\'' + location + '\',\'' + organizer + '\',\'' + i + '\');';
-
-              var sql = "INSERT INTO EVENT " + eventHeader + " VALUES " + eventData;
-              connection.query(sql, function(err, result){
-                if(err){throw err;}
-              });
             }
-          }
-
-        });
+          });
+        })(filename, count);
+        count++; //Increment count
       }
     }
 
-    if(isLoggedIn) statusPanel += '<h6>Uploaded files to database</h6>';
-    else statusPanel += '<h6>Error uploading files, you are not logged in!</h6>';
-  });
+    if(isLoggedIn && files.length != 0) statusPanel += '<h6>Uploaded files to database</h6>';
+    else if(!isLoggedIn) statusPanel += '<h6>Error uploading files, you are not logged in!</h6>';
 
+  });
   res.redirect('/');
 });
 
+//Remove files from db request
+app.post('/removeFiles', function(req, res){
+
+  const connection = mysql.createConnection({
+    host : 'dursley.socs.uoguelph.ca',
+    user : dbUsername,
+    password : dbPassword,
+    database : dbName
+  });
+
+  if(!isLoggedIn){
+    statusPanel += "<h6>You are not logged in!</h6>";
+  }
+  else if(req.body.confirmed){
+    //Empty database to ensure no duplicates
+    let sql = "DELETE FROM FILE;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    //Reset auto-increment for file
+    sql = "ALTER TABLE FILE AUTO_INCREMENT = 1;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    //Reset auto-increment for event
+    sql = "ALTER TABLE EVENT AUTO_INCREMENT = 1;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    //Reset auto-increment for alarm
+    sql = "ALTER TABLE ALARM AUTO_INCREMENT = 1;";
+    connection.query(sql, function(err, result){
+      if(err){};
+    });
+
+    statusPanel += "<h6>Removed all files from Database</h6>";
+  }
+
+
+});
+
+//Get Files from database
+app.get('/getDbFiles', function(req, res){
+
+  const connection = mysql.createConnection({
+    host : 'dursley.socs.uoguelph.ca',
+    user : dbUsername,
+    password : dbPassword,
+    database : dbName
+  });
+
+  if(!isLoggedIn){
+    res.send('[]');
+  }
+  else{
+
+    connection.connect(function(err){
+
+      let sql = 'SELECT * FROM FILE;';
+      connection.query(sql, function(err, result){
+
+        if(err){res.send('[]');}
+        else{
+          res.send(result);
+        }
+      });
+    });
+
+  }
+
+});
+
+//Database status request
+app.get('/dbStatus', function(req, res){
+
+  let toReturn = '';
+  //If not logged in
+  if(!isLoggedIn){
+    statusPanel += '<h6>You are not logged in!</h6>';
+  }
+  else{
+
+    const connection = mysql.createConnection({
+      host : 'dursley.socs.uoguelph.ca',
+      user : dbUsername,
+      password : dbPassword,
+      database : dbName
+    });
+
+    connection.connect(function(err){
+
+      let sql = "SELECT * FROM FILE";
+      connection.query(sql, function(err, rows){
+        if(err){}
+        else{
+
+          toReturn += '<h6>Database has ' + rows.length + ' files, ';
+
+          sql = "SELECT * FROM EVENT";
+          connection.query(sql, function(err, rows){
+            if(err){}
+            else{
+
+              toReturn += rows.length + ' events, and ';
+
+              sql = "SELECT * FROM ALARM";
+              connection.query(sql, function(err, rows){
+                if(err){}
+                else{
+                  toReturn += rows.length + ' alarms</h6>';
+
+                  statusPanel += toReturn;
+                  res.redirect('/');
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+  }
+
+});
+
+//Get events ajax call
+app.get('/getEventsStartTime', function(req, res){
+
+  let toReturn;
+  if(!isLoggedIn) statusPanel += '<h6>You are not logged in!</h6>';
+  else{
+
+    const connection = mysql.createConnection({
+      host : 'dursley.socs.uoguelph.ca',
+      user : dbUsername,
+      password : dbPassword,
+      database : dbName
+    });
+
+    //Connect to database
+    connection.connect(function(err) {
+
+      let sql = "SELECT * FROM EVENT ORDER BY start_time;";
+      connection.query(sql, function(err, result){
+        if(err){}
+        else{
+          res.json(result);
+        }
+      });
+    });
+  }
+});
+
+//Get conflicting events
+app.get('/getConflicting', function(req, res){
+
+  let toReturn;
+  if(!isLoggedIn) statusPanel += '<h6>You are not logged in!</h6>';
+  else{
+
+    const connection = mysql.createConnection({
+      host : 'dursley.socs.uoguelph.ca',
+      user : dbUsername,
+      password : dbPassword,
+      database : dbName
+    });
+
+    //Connect to database
+    connection.connect(function(err) {
+
+      let sql = "SELECT * FROM EVENT e1 WHERE EXISTS(SELECT 1 FROM EVENT e2 WHERE e1.start_time = e2.start_time AND e1.event_id <> e2.event_id);";
+      connection.query(sql, function(err, result){
+        if(err){console.log(err);}
+        else{
+          res.json(result);
+        }
+      });
+    });
+  }
+});
+
+//Get events with same location
+app.get('/getEventsSameLocation', function(req, res){
+
+  let toReturn;
+  if(!isLoggedIn) statusPanel += '<h6>You are not logged in!</h6>';
+  else{
+
+    const connection = mysql.createConnection({
+      host : 'dursley.socs.uoguelph.ca',
+      user : dbUsername,
+      password : dbPassword,
+      database : dbName
+    });
+
+    //Connect to database
+    connection.connect(function(err) {
+
+        let sql = "SELECT * FROM EVENT e1 WHERE EXISTS(SELECT * FROM EVENT e2 WHERE e1.location IS NOT NULL AND e1.location = e2.location AND e1.event_id <> e2.event_id);";
+      connection.query(sql, function(err, result){
+        if(err){console.log(err);}
+        else{
+          res.json(result);
+        }
+      });
+    });
+  }
+});
+
+app.get('/getAllEvents', function(req, res){
+
+    let filename = req.query.filename;
+
+    if(!isLoggedIn){
+      statusPanel += 'You are not logged in!';
+    }
+    else{
+
+      const connection = mysql.createConnection({
+        host : 'dursley.socs.uoguelph.ca',
+        user : dbUsername,
+        password : dbPassword,
+        database : dbName
+      });
+
+      //Connect to database
+      connection.connect(function(err) {
+
+        let sql = "SELECT * FROM EVENT e WHERE EXISTS(SELECT * FROM FILE f WHERE e.cal_file = f.cal_id AND f.file_Name = \'" + filename + "\');";
+        connection.query(sql, function(err, result){
+          if(err){console.log(err);}
+          else{
+            res.json(result);
+          }
+        });
+      });
+    }
+});
+
+app.get('/getAllAlarms', function(req, res){
+
+    let filename = req.query.filename;
+
+    if(!isLoggedIn){
+      statusPanel += 'You are not logged in!';
+    }
+    else{
+
+      const connection = mysql.createConnection({
+        host : 'dursley.socs.uoguelph.ca',
+        user : dbUsername,
+        password : dbPassword,
+        database : dbName
+      });
+
+      //Connect to database
+      connection.connect(function(err) {
+
+        let sql = "SELECT * FROM ALARM a WHERE EXISTS(SELECT * FROM EVENT e WHERE EXISTS(SELECT * FROM FILE f WHERE e.cal_file = f.cal_id AND a.event = e.event_id AND f.file_Name = \'" + filename + "\'));";
+        connection.query(sql, function(err, result){
+          if(err){console.log(err);}
+          else{
+            res.json(result);
+          }
+        });
+      });
+    }
+});
+
+app.get('/betweenDates', function(req, res){
+
+  if(!isLoggedIn){
+    statusPanel += 'You are not logged in!';
+  }
+  else{
+
+    const connection = mysql.createConnection({
+      host : 'dursley.socs.uoguelph.ca',
+      user : dbUsername,
+      password : dbPassword,
+      database : dbName
+    });
+
+    //Connect to database
+    connection.connect(function(err) {
+
+      let sql = "SELECT * FROM EVENT WHERE DATE(start_time) BETWEEN \'" + req.query.startDate + "\' AND \'" + req.query.endDate + "\';";
+      connection.query(sql, function(err, result){
+        if(err){console.log(err);}
+        else{
+          res.json(result);
+        }
+      });
+    });
+  }
+
+});
+
+//Login post request
 app.post('/login', function(req, res){
 
+  //Set Globals
   dbUsername = req.body.username;
   dbPassword = req.body.password;
   dbName = req.body.dbName;
@@ -441,7 +814,7 @@ app.post('/login', function(req, res){
 
   //Connect to database
   connection.connect(function(err) {
-    var sql = "CREATE TABLE IF NOT EXISTS FILE(cal_id INT AUTO_INCREMENT PRIMARY KEY, file_Name VARCHAR(60) NOT NULL, version INT NOT NULL, prod_id VARCHAR(256) NOT NULL)";
+    let sql = "CREATE TABLE IF NOT EXISTS FILE(cal_id INT AUTO_INCREMENT PRIMARY KEY, file_Name letCHAR(60) NOT NULL, version INT NOT NULL, prod_id letCHAR(256) NOT NULL)";
     connection.query(sql, function (err, result) {
       if (err){
         statusPanel += '<h6>Failed to log in</h6>';
@@ -452,13 +825,13 @@ app.post('/login', function(req, res){
       }
 
     });
-    sql = "CREATE TABLE IF NOT EXISTS EVENT(event_id INT AUTO_INCREMENT PRIMARY KEY, summary VARCHAR(1024), start_time DATETIME NOT NULL, location VARCHAR(60), organizer VARCHAR(256), cal_file INT NOT NULL, FOREIGN KEY(cal_file) REFERENCES FILE(cal_id) ON DELETE CASCADE)";
+    sql = "CREATE TABLE IF NOT EXISTS EVENT(event_id INT AUTO_INCREMENT PRIMARY KEY, summary letCHAR(1024), start_time DATETIME NOT NULL, location letCHAR(60), organizer letCHAR(256), cal_file INT NOT NULL, FOREIGN KEY(cal_file) REFERENCES FILE(cal_id) ON DELETE CASCADE)";
     connection.query(sql, function (err, result) {
       if (err){
 
       }
     });
-    sql = "CREATE TABLE IF NOT EXISTS ALARM(alarm_id INT AUTO_INCREMENT PRIMARY KEY, action VARCHAR(256) NOT NULL, `trigger` VARCHAR(256) NOT NULL, event INT NOT NULL, FOREIGN KEY(event) REFERENCES EVENT(event_id) ON DELETE CASCADE)";
+    sql = "CREATE TABLE IF NOT EXISTS ALARM(alarm_id INT AUTO_INCREMENT PRIMARY KEY, action letCHAR(256) NOT NULL, `trigger` letCHAR(256) NOT NULL, event INT NOT NULL, FOREIGN KEY(event) REFERENCES EVENT(event_id) ON DELETE CASCADE)";
     connection.query(sql, function (err, result) {
       if (err){
 

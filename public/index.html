@@ -59,16 +59,15 @@
     </div>
   </div>
   <br>
-  <div>
     <!-- Upload File Button -->
     <form enctype="multipart/form-data" method="post" action="/upload" id="uploadButton">
       <input type="file" name="uploadFile"/>
       <br>
-      <input type="submit" value="Upload">
+      <div style="float:left;">
+        <input type="submit" value="Upload">
+      </div>
     </form>
-    <button type="button" class="btn btn-default" style="float: right;" id="storeFiles" onclick="document.location.reload(true)">Store All Files</button>
     <br><hr>
-  </div>
   <!-- Calendar View Panel -->
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -148,11 +147,62 @@
         <input type="text" class="form-control" id="loginUsername" value="" placeholder="Username" autocomplete="off"><br>
         <input type="password" class="form-control" id="loginPassword" value="" placeholder="Password" autocomplete="off"><br>
         <input type="text" class="form-control" id="loginDbName" value="" placeholder="Database Name" autocomplete="off"><br>
-        <input type='submit' class="btn btn-secondary" id="loginButton" style="float:right;" onclick="document.location.reload(true)">
+        <input type='submit' class="btn btn-secondary" id="loginButton" style="float:right;" onclick="document.location.reload(true)" value="Log in">
       </div>
     </form>
+    <br><hr>
   </div>
-</div>
+  <!-- Database Section -->
+  <div id="database">
+    <h3><u>Database Panel</u></h3>
+    <!-- Display, Store and Remove files -->
+    <div id="container">
+      <button type="button" class="btn btn-secondary" id="dbStatus" onclick="document.location.reload(true)">Display Database Status</button>
+      <button type="button" class="btn btn-secondary" id="storeFiles" onclick="document.location.reload(true)">Store All Files In Database</button>
+      <button type="button" class="btn btn-secondary" id="removeFiles" onclick="document.location.reload(true)">Remove All Files In Database</button>
+    </div>
+    <br><br>
+    <!-- Database Table -->
+    <div class="scroll">
+      <table class="table-striped" id>
+        <thead id="dbHeader">
+          <tr>
+
+          </tr>
+        </thead>
+        <tbody id="dbbody">
+
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <h3><u>Execute Query</u></h3>
+    <!-- Query Buttons -->
+    <div id="container">
+      <button type="button" class="btn btn-secondary" id="startDtEvents">Display Events Sorted by Start Date</button>
+      <button type="button" class="btn btn-secondary" id="conflictingEvents">Display Conflicting Events</button>
+      <button type="button" class="btn btn-secondary" id="sameLocation">Display All Events With The Same Location</button>
+    </div><br><br>
+    <!-- Database File Dropdown -->
+    <div>
+      <select id="dbDropdown">
+
+      </select>
+    </div>
+    <div id="container">
+      <button type="button" class="btn btn-secondary" id="allEvents">Display All Events From Selected File</button>
+      <button type="button" class="btn btn-secondary" id="allAlarms">Display All Alarms From Selected File</button>
+    </div>
+  </div><br>
+  <!-- -->
+  <div>
+    <pre>Start Date&#9;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Date</pre>
+    <form>
+      <input type="date" id="dbStartDate" name="dbStartDate">
+      <input type="date" id="dbEndDate" name="dbStartDate"><br>
+      <button type="button" class="btn btn-secondary" id="betweenForm">Display All Events Between These Dates</button>
+    </form>
+  </div>
 </div>
 <!-- Leave me at the bottom of body -->
 <script src="/index.js"></script>
